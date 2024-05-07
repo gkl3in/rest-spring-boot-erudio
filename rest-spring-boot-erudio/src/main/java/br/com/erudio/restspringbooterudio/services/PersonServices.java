@@ -3,8 +3,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import br.com.erudio.restspringbooterudio.data.vo.v1.PersonVO;
+import br.com.erudio.restspringbooterudio.data.vo.v2.PersonVOV2;
 import br.com.erudio.restspringbooterudio.exceptions.ResourceNotFoundException;
 import br.com.erudio.restspringbooterudio.mapper.ModelMapperGeneric;
+import br.com.erudio.restspringbooterudio.mapper.custom.PersonMapper;
 import br.com.erudio.restspringbooterudio.model.Person;
 import br.com.erudio.restspringbooterudio.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class PersonServices {
 
     @Autowired
     PersonRepository repository;
+
+    @Autowired
+    PersonMapper mapper;
 
     public List<PersonVO> findAll() {
 
@@ -31,7 +36,6 @@ public class PersonServices {
 
         var entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
-
         return ModelMapperGeneric.parseObject(entity, PersonVO.class);
     }
 
@@ -40,7 +44,14 @@ public class PersonServices {
         logger.info("Creating one person!");
         var entity = ModelMapperGeneric.parseObject(person, Person.class);
         var vo =  ModelMapperGeneric.parseObject(repository.save(entity), PersonVO.class);
+        return vo;
+    }
 
+    public PersonVOV2 createV2(PersonVOV2 person) {
+
+        logger.info("Creating one person with V2!");
+        var entity = mapper.convertVoTOEntity(person);
+        var vo =  mapper.convertEntityToVo(repository.save(entity));
         return vo;
     }
 
@@ -57,7 +68,6 @@ public class PersonServices {
         entity.setGender(person.getGender());
 
         var vo =  ModelMapperGeneric.parseObject(repository.save(entity), PersonVO.class);
-
         return vo;
     }
 
@@ -70,3 +80,4 @@ public class PersonServices {
         repository.delete(entity);
     }
 }
+
