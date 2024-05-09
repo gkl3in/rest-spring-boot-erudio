@@ -1,0 +1,1 @@
+INSERT INTO `person` VALUES (1,'123 Main Street','John','Male','Doe'),(2,'123 sc','Gabriel','Male','Klein'),(3,'123 Mla memo','anaaaa','Female','dias');
