@@ -1,13 +1,26 @@
 package br.com.erudio.restspringbooterudio.mapper;
 
+import br.com.erudio.restspringbooterudio.data.vo.v1.PersonVO;
+import br.com.erudio.restspringbooterudio.model.Person;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelMapperGeneric {
+public class DozerMapper {
 
     private static ModelMapper mapper = new ModelMapper();
+
+    static {
+        mapper.createTypeMap(
+                        Person.class,
+                        PersonVO.class)
+                .addMapping(Person::getId, PersonVO::setKey);
+        mapper.createTypeMap(
+                        PersonVO.class,
+                        Person.class)
+                .addMapping(PersonVO::getKey, Person::setId);
+    }
 
     public static <O, D> D parseObject(O origin, Class<D> destination) {
         return mapper.map(origin, destination);
