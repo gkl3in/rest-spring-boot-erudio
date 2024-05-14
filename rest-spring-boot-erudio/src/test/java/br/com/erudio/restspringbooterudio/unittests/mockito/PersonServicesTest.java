@@ -1,6 +1,7 @@
-package br.com.erudio.restspringbooterudio.person;
+package br.com.erudio.restspringbooterudio.unittests.mockito;
 
 import br.com.erudio.restspringbooterudio.data.vo.v1.PersonVO;
+import br.com.erudio.restspringbooterudio.exceptions.RequiredObjectIsNullException;
 import br.com.erudio.restspringbooterudio.model.Person;
 import br.com.erudio.restspringbooterudio.repositories.PersonRepository;
 import br.com.erudio.restspringbooterudio.services.PersonServices;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;

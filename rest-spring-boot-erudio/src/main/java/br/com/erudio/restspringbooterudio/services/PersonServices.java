@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import br.com.erudio.restspringbooterudio.controllers.PersonController;
 import br.com.erudio.restspringbooterudio.data.vo.v1.PersonVO;
 import br.com.erudio.restspringbooterudio.data.vo.v2.PersonVOV2;
+import br.com.erudio.restspringbooterudio.exceptions.RequiredObjectIsNullException;
 import br.com.erudio.restspringbooterudio.exceptions.ResourceNotFoundException;
 import br.com.erudio.restspringbooterudio.mapper.DozerMapper;
 import br.com.erudio.restspringbooterudio.mapper.custom.PersonMapper;
@@ -50,6 +51,8 @@ public class PersonServices {
 
     public PersonVO create(PersonVO person) {
 
+        if (person == null) throw new RequiredObjectIsNullException();
+
         logger.info("Creating one person!");
         var entity = DozerMapper.parseObject(person, Person.class);
         var vo =  DozerMapper.parseObject(repository.save(entity), PersonVO.class);
@@ -66,6 +69,8 @@ public class PersonServices {
     }
 
     public PersonVO update(PersonVO person) {
+
+        if (person == null) throw new RequiredObjectIsNullException();
 
         logger.info("Updating one person!");
 
