@@ -1,4 +1,4 @@
-package br.com.erudio.restspringbooterudio.securityjwt;
+package br.com.erudio.restspringbooterudio.security.jwt;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
