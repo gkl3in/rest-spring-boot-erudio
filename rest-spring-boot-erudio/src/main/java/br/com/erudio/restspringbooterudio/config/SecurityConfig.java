@@ -49,7 +49,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         JwtTokenFilter customFilter = new JwtTokenFilter(tokenProvider);
-        
+
         return http
                 .httpBasic(basic -> basic.disable())
                 .csrf(csrf -> csrf.disable())
