@@ -1,8 +1,10 @@
 package br.com.erudio.restspringbooterudio.integrationtests.vo;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
-
+@XmlRootElement
 public class PersonVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
