@@ -4,13 +4,12 @@ import java.util.logging.Logger;
 
 import br.com.erudio.restspringbooterudio.controllers.PersonController;
 import br.com.erudio.restspringbooterudio.data.vo.v1.PersonVO;
-import br.com.erudio.restspringbooterudio.data.vo.v2.PersonVOV2;
 import br.com.erudio.restspringbooterudio.exceptions.RequiredObjectIsNullException;
 import br.com.erudio.restspringbooterudio.exceptions.ResourceNotFoundException;
 import br.com.erudio.restspringbooterudio.mapper.DozerMapper;
-import br.com.erudio.restspringbooterudio.mapper.custom.PersonMapper;
 import br.com.erudio.restspringbooterudio.model.Person;
 import br.com.erudio.restspringbooterudio.repositories.PersonRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +24,6 @@ public class PersonServices {
     @Autowired
     PersonRepository repository;
 
-    @Autowired
-    PersonMapper mapper;
-
     public List<PersonVO> findAll() {
 
         logger.info("Finding all people!");
@@ -40,6 +36,7 @@ public class PersonServices {
     }
 
     public PersonVO findById(Long id) {
+
         logger.info("Finding one person!");
 
         var entity = repository.findById(id)
@@ -57,14 +54,6 @@ public class PersonServices {
         var entity = DozerMapper.parseObject(person, Person.class);
         var vo =  DozerMapper.parseObject(repository.save(entity), PersonVO.class);
         vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel());
-        return vo;
-    }
-
-    public PersonVOV2 createV2(PersonVOV2 person) {
-
-        logger.info("Creating one person with V2!");
-        var entity = mapper.convertVoTOEntity(person);
-        var vo =  mapper.convertEntityToVo(repository.save(entity));
         return vo;
     }
 
@@ -87,6 +76,20 @@ public class PersonServices {
         return vo;
     }
 
+    @Transactional
+    public PersonVO disablePerson(Long id) {
+
+        logger.info("Disabling one person!");
+
+        repository.disablePerson(id);
+
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        var vo = DozerMapper.parseObject(entity, PersonVO.class);
+        vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+        return vo;
+    }
+
     public void delete(Long id) {
 
         logger.info("Deleting one person!");
@@ -96,4 +99,3 @@ public class PersonServices {
         repository.delete(entity);
     }
 }
-
