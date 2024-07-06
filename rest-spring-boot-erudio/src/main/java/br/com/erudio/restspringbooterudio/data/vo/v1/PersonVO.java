@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.Mapping;
 
 import java.io.Serializable;
 
-@JsonPropertyOrder({"id", "firstName", "lastName", "address", "gender"})
+@JsonPropertyOrder({"id", "firstName", "lastName", "address", "gender", "enabled"})
 public class PersonVO extends RepresentationModel<PersonVO> implements Serializable {
 
     private static final long serialVersionUID = 1L;
