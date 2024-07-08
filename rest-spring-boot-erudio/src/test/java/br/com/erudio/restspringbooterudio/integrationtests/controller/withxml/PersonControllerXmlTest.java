@@ -12,12 +12,11 @@ import br.com.erudio.restspringbooterudio.configs.TestConfigs;
 import br.com.erudio.restspringbooterudio.data.vo.v1.security.TokenVO;
 import br.com.erudio.restspringbooterudio.integrationtests.testcontainers.AbstractIntegrationTest;
 import br.com.erudio.restspringbooterudio.integrationtests.vo.AccountCredentialsVO;
+import br.com.erudio.restspringbooterudio.integrationtests.vo.PagedModelPerson;
 import br.com.erudio.restspringbooterudio.integrationtests.vo.PersonVO;
-import org.junit.jupiter.api.BeforeAll;
+import br.com.erudio.restspringbooterudio.integrationtests.vo.wrappers.WrapperPersonVO;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -246,19 +245,21 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 	@Test
 	@Order(6)
 	public void testFindAll() throws JsonMappingException, JsonProcessingException {
-		
+
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
-					.when()
-					.get()
+				.queryParams("page", 1, "size", 10, "direction", "asc")
+				.when()
+				.get()
 				.then()
-					.statusCode(200)
-						.extract()
-						.body()
-							.asString();
-		
-		List<PersonVO> people = objectMapper.readValue(content, new TypeReference<List<PersonVO>>() {});
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+		var people = wrapper.getContent();
 		
 		PersonVO foundPersonOne = people.getFirst();
 		
@@ -268,31 +269,31 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(foundPersonOne.getAddress());
 		assertNotNull(foundPersonOne.getGender());
 		
-		assertTrue(foundPersonOne.getEnabled());
-		
-		assertEquals(1, foundPersonOne.getId());
+		assertFalse(foundPersonOne.getEnabled());
 
-		assertEquals("123 Main Street", foundPersonOne.getFirstName());
-		assertEquals("John", foundPersonOne.getLastName());
-		assertEquals("Male", foundPersonOne.getAddress());
-		assertEquals("Doe", foundPersonOne.getGender());
-		
+		assertEquals(329, foundPersonOne.getId());
+
+		assertEquals("Adelbert", foundPersonOne.getFirstName());
+		assertEquals("Greenwood", foundPersonOne.getLastName());
+		assertEquals("4038 Fremont Park", foundPersonOne.getAddress());
+		assertEquals("Male", foundPersonOne.getGender());
+
 		PersonVO foundPersonSix = people.get(2);
-		
+
 		assertNotNull(foundPersonSix.getId());
 		assertNotNull(foundPersonSix.getFirstName());
 		assertNotNull(foundPersonSix.getLastName());
 		assertNotNull(foundPersonSix.getAddress());
 		assertNotNull(foundPersonSix.getGender());
-		
-		assertTrue(foundPersonSix.getEnabled());
-		
-		assertEquals(3, foundPersonSix.getId());
 
-		assertEquals("123 Mla memo", foundPersonSix.getFirstName());
-		assertEquals("anaaaa", foundPersonSix.getLastName());
-		assertEquals("Female", foundPersonSix.getAddress());
-		assertEquals("dias", foundPersonSix.getGender());
+		Assertions.assertFalse(foundPersonSix.getEnabled());
+
+		assertEquals(991, foundPersonSix.getId());
+
+		assertEquals("Adiana", foundPersonSix.getFirstName());
+		assertEquals("Yoseloff", foundPersonSix.getLastName());
+		assertEquals("9 Bultman Avenue", foundPersonSix.getAddress());
+		assertEquals("Female", foundPersonSix.getGender());
 	}
 
 	
