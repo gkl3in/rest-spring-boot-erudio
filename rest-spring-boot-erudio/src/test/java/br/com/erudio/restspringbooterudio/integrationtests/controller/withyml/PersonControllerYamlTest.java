@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import br.com.erudio.restspringbooterudio.configs.TestConfigs;
 import br.com.erudio.restspringbooterudio.integrationtests.controller.withyml.mapper.YMLMapper;
@@ -17,7 +15,6 @@ import br.com.erudio.restspringbooterudio.integrationtests.vo.AccountCredentials
 import br.com.erudio.restspringbooterudio.integrationtests.vo.PagedModelPerson;
 import br.com.erudio.restspringbooterudio.integrationtests.vo.PersonVO;
 import br.com.erudio.restspringbooterudio.integrationtests.vo.TokenVO;
-import br.com.erudio.restspringbooterudio.integrationtests.vo.wrappers.WrapperPersonVO;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.boot.test.context.SpringBootTest;
