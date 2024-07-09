@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
 
 import br.com.erudio.restspringbooterudio.configs.TestConfigs;
@@ -296,9 +297,47 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertEquals("Female", foundPersonSix.getGender());
 	}
 
-	
 	@Test
 	@Order(7)
+	public void testFindByName() throws IOException {
+
+		var content = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
+				.pathParam("firstName", "a")
+				.queryParams("page", 0, "size", 6, "direction", "asc")
+				.when()
+				.get("findPersonByName/{firstName}")
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+		var people = wrapper.getContent();
+
+		PersonVO foundPersonOne = people.getFirst();
+
+		assertNotNull(foundPersonOne.getId());
+		assertNotNull(foundPersonOne.getFirstName());
+		assertNotNull(foundPersonOne.getLastName());
+		assertNotNull(foundPersonOne.getAddress());
+		assertNotNull(foundPersonOne.getGender());
+
+		assertTrue(foundPersonOne.getEnabled());
+
+		assertEquals(1, foundPersonOne.getId());
+
+		assertEquals("123 Main Street", foundPersonOne.getFirstName());
+		assertEquals("John", foundPersonOne.getLastName());
+		assertEquals("Male", foundPersonOne.getAddress());
+		assertEquals("Doe", foundPersonOne.getGender());
+	}
+
+	
+	@Test
+	@Order(8)
 	public void testFindAllWithoutToken() throws JsonMappingException, JsonProcessingException {
 		
 		RequestSpecification specificationWithoutToken = new RequestSpecBuilder()
