@@ -404,6 +404,44 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 			.then()
 				.statusCode(403);
 	}
+
+	@Test
+	@Order(9)
+	public void testHATEOAS() throws JsonMappingException, JsonProcessingException {
+
+		var unthreatedContent = given().spec(specification)
+				.config(
+						RestAssuredConfig
+								.config()
+								.encoderConfig(EncoderConfig.encoderConfig()
+										.encodeContentTypeAs(
+												TestConfigs.CONTENT_TYPE_YML,
+												ContentType.TEXT)))
+				.contentType(TestConfigs.CONTENT_TYPE_YML)
+				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.queryParams("page", 3, "size", 3, "direction", "asc")
+				.when()
+				.get()
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		var content = unthreatedContent.replace("\n", "").replace("\r", "");
+
+		assertTrue(content.contains("rel: \"self\"    href: \"http://localhost:8888/api/person/v1/663\""));
+		assertTrue(content.contains("rel: \"self\"    href: \"http://localhost:8888/api/person/v1/329\""));
+		assertTrue(content.contains("rel: \"self\"    href: \"http://localhost:8888/api/person/v1/30\""));
+
+		assertTrue(content.contains("rel: \"first\"  href: \"http://localhost:8888/api/person/v1?direction=asc&page=0&size=3&sort=firstName,asc\""));
+		assertTrue(content.contains("rel: \"prev\"  href: \"http://localhost:8888/api/person/v1?direction=asc&page=2&size=3&sort=firstName,asc\""));
+		assertTrue(content.contains("rel: \"self\"  href: \"http://localhost:8888/api/person/v1?page=3&size=3&direction=asc\""));
+		assertTrue(content.contains("rel: \"next\"  href: \"http://localhost:8888/api/person/v1?direction=asc&page=4&size=3&sort=firstName,asc\""));
+		assertTrue(content.contains("rel: \"last\"  href: \"http://localhost:8888/api/person/v1?direction=asc&page=334&size=3&sort=firstName,asc\""));
+
+		assertTrue(content.contains("page:  size: 3  totalElements: 1003  totalPages: 335  number: 3"));
+	}
 	
 	private void mockPerson() {
 		person.setFirstName("Nelson");
